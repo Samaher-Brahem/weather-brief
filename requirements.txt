@@ -1,5 +1,3 @@
 requests
 groq
 python-dotenv
-anthropic
-apscheduler
