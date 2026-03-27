@@ -67,6 +67,17 @@ brief = generate_weather_brief(prompt)
 from src.prompt_builder import build_llm_prompt
 from src.llm_client import generate_weather_brief
 from src.email_sender import send_weather_brief_email
+from datetime import datetime
+import pytz
+
+# Add this at the start of main.py
+brussels_tz = pytz.timezone('Europe/Brussels')
+now = brussels_tz.localize(datetime.now())
+
+# Only run between 6:00 AM and 7:00 AM Brussels time
+if not (6 <= now.hour < 7):
+    print("Not the right time, skipping...")
+    exit(0)
 
 # Build the prompt
 prompt = build_llm_prompt()

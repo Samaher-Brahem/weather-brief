@@ -46,4 +46,24 @@ COMMUTE_DAYS = [1, 3]
 # =========================
 
 # Official Belgian holidays Google Calendar ID
-# BELGIAN_HOLIDAYS_CALENDAR_ID = "belgian.calendar.id@group.calendar.google.com"
+BELGIAN_HOLIDAYS_CALENDAR_ID = "en.be#holiday@group.v.calendar.google.com"
+
+
+# =========================
+# 👤 User preferences
+# =========================
+
+# User name for greetings (alternates between these)
+USER_NAMES = ["Sam", "Samaher"]
+
+# Motivational phrases for commute days
+COMMUTE_BOOSTS = [
+    "Remember: great things come with great effort.",
+    "You've got this—every commute is a step forward.",
+    "The grind pays off. Keep pushing.",
+    "Excellence demands effort. Go earn it.",
+    "You're stronger than you think. Let's go.",
+    "Small consistent efforts lead to big wins.",
+    "Stay focused, stay strong.",
+    "Your effort today builds your tomorrow.",
+]

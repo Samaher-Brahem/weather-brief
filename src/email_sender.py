@@ -30,20 +30,21 @@ def send_weather_brief_email(subject: str, brief: str) -> bool:
         # Create HTML version
         html = f"""\
         <html>
-          <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-              <h2 style="color: #2c3e50;">{subject}</h2>
-              <p style="font-size: 16px; margin: 20px 0;">
-                {brief}
-              </p>
-              <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-              <p style="font-size: 12px; color: #7f8c8d;">
-                This brief was generated automatically at {__import__('datetime').datetime.now().strftime('%H:%M')} CET
-              </p>
-            </div>
-          </body>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #2c3e50;">{subject}</h2>
+        <p style="font-size: 16px; margin: 20px 0;">
+        {brief}
+        </p>
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+        <p style="font-size: 12px; color: #7f8c8d;">
+        Generated at {__import__('datetime').datetime.now().strftime('%H:%M %Z')}
+        </p>
+        </div>
+        </body>
         </html>
         """
+        
         
         part = MIMEText(html, "html")
         message.attach(part)
