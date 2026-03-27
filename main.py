@@ -67,6 +67,7 @@ brief = generate_weather_brief(prompt)
 from src.prompt_builder import build_llm_prompt
 from src.llm_client import generate_weather_brief
 from src.email_sender import send_weather_brief_email
+"""
 from datetime import datetime
 import pytz
 
@@ -80,6 +81,7 @@ if not (6 <= now.hour < 7):
     exit(0)
 
 print(f"✅ Running at {now.strftime('%H:%M %Z')}")
+"""
 
 # Build the prompt
 prompt = build_llm_prompt()
