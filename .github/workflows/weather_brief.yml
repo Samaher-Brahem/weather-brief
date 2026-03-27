@@ -2,8 +2,8 @@ name: Daily Weather Brief
 
 on:
   schedule:
-    # Runs at 5:30 AM UTC (= 6:30 AM CET/Brussels time in winter)
-    # For summer time (CEST), change to '30 4 * * *'
+    # 6:30 AM Brussels time (UTC+1 winter, UTC+2 summer)
+    # Using 5:30 UTC as a compromise for most of the year
     - cron: '30 5 * * *'
   
   # Allow manual trigger from GitHub UI
