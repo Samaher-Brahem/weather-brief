@@ -16,10 +16,10 @@ def main():
     
     # Determine day type and build context
     day_type = get_day_type()
-    weather_header_html, weather_summaries = build_weather_context(day_type)
+    weather_header_html, weather_summaries, locations = build_weather_context(day_type)
     
-    # Generate LLM prompt
-    prompt = build_llm_prompt(day_type, weather_summaries)
+    # Generate LLM prompt with location awareness
+    prompt = build_llm_prompt(day_type, weather_summaries, locations)
     
     # Generate weather brief from LLM
     brief = generate_weather_brief(prompt)

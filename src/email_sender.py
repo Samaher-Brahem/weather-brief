@@ -20,7 +20,7 @@ RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL")
 
 def create_email_html(subject: str, brief: str, weather_header: str) -> str:
     """
-    Create a professional HTML email template.
+    Create a professional HTML email template with customizable colors.
     
     Args:
         subject: Email subject
@@ -30,7 +30,17 @@ def create_email_html(subject: str, brief: str, weather_header: str) -> str:
     Returns:
         Complete HTML string
     """
+    from config import (
+        GRADIENT_COLOR_1, GRADIENT_COLOR_2, ACCENT_COLOR,
+        PERIOD_BOX_BG, PERIOD_BORDER_COLOR, BOLD_PERIOD_HEADERS,
+        PERIOD_HEADER_STYLE, TIP_BOX_BG, TIP_BOX_BORDER
+    )
+    
     timestamp = datetime.now().strftime("%H:%M")
+    
+    # Build font-weight and font-style based on config
+    font_weight = "bold" if BOLD_PERIOD_HEADERS or "bold" in PERIOD_HEADER_STYLE else "normal"
+    font_style = "italic" if "italic" in PERIOD_HEADER_STYLE else "normal"
     
     html = f"""
     <!DOCTYPE html>
@@ -54,7 +64,7 @@ def create_email_html(subject: str, brief: str, weather_header: str) -> str:
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             }}
             .header {{
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, {GRADIENT_COLOR_1} 0%, {GRADIENT_COLOR_2} 100%);
                 color: white;
                 padding: 30px 20px;
                 text-align: center;
@@ -74,21 +84,23 @@ def create_email_html(subject: str, brief: str, weather_header: str) -> str:
                 font-size: 15px;
             }}
             .period {{
-                background-color: #f9f9f9;
-                border-left: 4px solid #667eea;
+                background-color: {PERIOD_BOX_BG};
+                border-left: 4px solid {PERIOD_BORDER_COLOR};
                 padding: 15px;
                 margin: 20px 0;
                 border-radius: 4px;
             }}
             .period strong {{
                 display: block;
-                color: #667eea;
+                color: {ACCENT_COLOR};
                 margin-bottom: 8px;
                 font-size: 16px;
+                font-weight: {font_weight};
+                font-style: {font_style};
             }}
             .tip {{
-                background-color: #e8f4f8;
-                border: 1px solid #b3dfe8;
+                background-color: {TIP_BOX_BG};
+                border: 1px solid {TIP_BOX_BORDER};
                 padding: 15px;
                 border-radius: 6px;
                 margin: 20px 0;
@@ -104,7 +116,7 @@ def create_email_html(subject: str, brief: str, weather_header: str) -> str:
                 border-top: 1px solid #e0e0e0;
             }}
             strong {{
-                color: #667eea;
+                color: {ACCENT_COLOR};
             }}
         </style>
     </head>
