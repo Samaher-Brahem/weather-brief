@@ -1,87 +1,43 @@
-"""
+"""Main entry point for weather brief generation and delivery."""
+import sys
+from pathlib import Path
 
-from src.weather import get_city_forecast
-from config import MORNING_HOURS, AFTERNOON_HOURS
+# Add current directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
 
-if __name__ == "__main__":
-    print("=== ANTWERP MORNING ===")
-    print(get_city_forecast("antwerp", MORNING_HOURS))
-
-    print("\n=== BRUSSELS EVENING ===")
-    print(get_city_forecast("brussels", AFTERNOON_HOURS))
-
-
-from src.day_classifier import classify_day
-
-if __name__ == "__main__":
-    # temporary: simulate NOT a holiday
-    day = classify_day(is_holiday=False)
-    print(day)
-
-
-
-from src.holidays import is_today_holiday
-from src.day_classifier import classify_day
-
-if __name__ == "__main__":
-    today_holiday = is_today_holiday()
-    day = classify_day(is_holiday=today_holiday)
-    print("Is today a holiday?", today_holiday)
-    print("Day classification:", day)
-
-    
-
-from src.day_classifier import get_day_type, get_weather_hours
-
-# Test day classifier
-day_type = get_day_type()
-weather_hours = get_weather_hours(day_type)
-
-print(f"Today's day type: {day_type}")
-print(f"Weather hours to fetch: {weather_hours}")
-
-
-
-from src.prompt_builder import build_llm_prompt
-
-# Test prompt builder
-prompt = build_llm_prompt()
-print(prompt)
-
-
-
-from src.prompt_builder import build_llm_prompt
-from src.llm_client import generate_weather_brief
-
-# Build the prompt
-prompt = build_llm_prompt()
-
-print("=" * 50)
-print("WEATHER BRIEF")
-print("=" * 50)
-
-# Generate the brief (this already prints during streaming)
-brief = generate_weather_brief(prompt)
-"""
-
-from src.prompt_builder import build_llm_prompt
-from src.llm_client import generate_weather_brief
+from src.day_classifier import get_day_type
+from src.prompt_builder import build_weather_context, build_llm_prompt
+from src.llm_client import generate_weather_brief, generate_subject_line
 from src.email_sender import send_weather_brief_email
 
-# Build the prompt
-prompt = build_llm_prompt()
 
-print("=" * 50)
-print("GENERATING WEATHER BRIEF")
-print("=" * 50)
+def main():
+    """Generate and send daily weather brief."""
+    
+    # Determine day type and build context
+    day_type = get_day_type()
+    weather_header_html, weather_summaries = build_weather_context(day_type)
+    
+    # Generate LLM prompt
+    prompt = build_llm_prompt(day_type, weather_summaries)
+    
+    # Generate weather brief from LLM
+    brief = generate_weather_brief(prompt)
+    
+    # Generate dynamic subject line based on weather
+    subject = generate_subject_line(weather_summaries.get("midday", {}))
+    
+    # Send email
+    success = send_weather_brief_email(subject, brief, weather_header_html)
+    
+    # Print confirmation
+    if success:
+        print(f"\n✅ Weather brief sent successfully!")
+        print(f"📧 To: {__import__('os').getenv('RECIPIENT_EMAIL')}")
+        print(f"📝 Subject: {subject}")
+    else:
+        print(f"\n⚠️ Failed to send weather brief email.")
 
-# Generate the brief (returns tuple of subject and brief)
-subject, brief = generate_weather_brief(prompt)
 
-print("=" * 50)
-print("SENDING EMAIL")
-print("=" * 50)
-
-# Send via email
-send_weather_brief_email(subject, brief)
-
+if __name__ == "__main__":
+    main()
