@@ -16,6 +16,7 @@ jobs:
       GMAIL_USER: ${{ secrets.GMAIL_USER }}
       GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
       RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+      GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
       TZ: 'Europe/Brussels'   # Important: set runner timezone
 
     steps:
