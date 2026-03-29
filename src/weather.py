@@ -37,9 +37,10 @@ def get_daytime_rain_max(city_key: str) -> int:
     return max(day_rains) if day_rains else 0
 
 def get_weather_gif(condition: str) -> str:
-    """fetch a random weather-related GIF with a reliable fallback."""
+    """fetch a weather GIF with a direct-link fix and a solid fallback."""
     api_key = os.getenv("GIPHY_API_KEY")
-    # Your chosen reliable fallback GIF
+    
+    # YOUR FALLBACK: Direct media link to the cat with the umbrella
     fallback_url = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExemdteWFpanhuNDFzbmhvbTg0ZW9haThpYzFzeTRmNnUzajNxZno1byZlcD12MV9naWZzX3NlYXJjaCZjdD1n/AEpaVDTAop4TC/giphy.gif"
     
     if not api_key:
@@ -56,16 +57,18 @@ def get_weather_gif(condition: str) -> str:
     
     try:
         resp = requests.get(url, params=params, timeout=5).json()
-        if resp.get('data'):
+        if resp.get('data') and len(resp['data']) > 0:
             choice = random.choice(resp['data'])
-            # We target the 'fixed_height' version specifically for the direct .gif link
-            gif_url = choice['images']['fixed_height']['url']
             
-            # Email clients need the direct giphy.gif format, not the short link
+            # Using 'downsized_medium' or 'fixed_height' is best for direct .gif links
+            # We strip any URL parameters (everything after ?) to ensure email stability
+            gif_url = choice['images']['downsized_medium']['url'].split('?')[0]
+            
+            # Ensure it is a direct link to the media subdomain
             if "giphy.gif" in gif_url:
                 return gif_url
     except Exception as e:
-        print(f"GIF Error: {e}")
+        print(f"⚠️ GIF Error: {e}")
     
     return fallback_url
 
