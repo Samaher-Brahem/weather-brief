@@ -51,6 +51,7 @@ WEATHER DATA:
 - Night (20-24h): {fmt('night')}
 
 INSTRUCTIONS:
+0. Start with a friendly morning to Sam or Samaher. Use a different greeting each time (you can be creative here).
 1. Output valid JSON only. No markdown formatting outside the JSON.
 2. "subject": A dynamic, catchy subject line summarizing the general weather condition with an emoji.
 3. "body": The email body exactly matching the structure below. Use double newlines (\\n\\n) between sections so it renders with line breaks.
@@ -58,9 +59,10 @@ INSTRUCTIONS:
 5. Include the specific degrees, wind speeds, and rain probabilities naturally in the text.
 6. Note that "Overnight" MUST be in the past tense (what happened while sleeping).
 7. End with a casual, human sign-off (e.g., "Alright, peace out OR yo yo have a nice day OR ay besslema OR yalla peace OR yalla salem OR nharek zin, etc").
+8. You can be creative with the language and tone, but keep it concise and engaging. The goal is to make Sam smile while giving a clear picture of the day's weather. 
 
 EXPECTED JSON FORMAT:
 {{
   "subject": "emoji + catchy subject line",
-  "body": "Good morning Sam,\\n\\n[1 sentence general vibe of the day]\\n\\nOvernight: [past tense, mention conditions and rain]\\n\\nMorning: [forecast, specific temps, wind, vibe]\\n\\nMidday: [forecast, specific temps, vibe]\\n\\nEvening: [forecast, temps, rain prob]\\n\\nNight: [forecast, temps, chill/dry note]\\n\\n[Casual sign-off]"
+  "body": "morning greeting to Sam,\\n\\n[1 sentence general vibe of the day]\\n\\nOvernight: [past tense, mention conditions and rain]\\n\\nMorning: [forecast, specific temps, wind, vibe]\\n\\nMidday: [forecast, specific temps, vibe]\\n\\nEvening: [forecast, temps, rain prob]\\n\\nNight: [forecast, temps, chill/dry note]\\n\\n[Casual sign-off]"
 }}"""
