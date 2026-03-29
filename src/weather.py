@@ -37,10 +37,10 @@ def get_daytime_rain_max(city_key: str) -> int:
     return max(day_rains) if day_rains else 0
 
 def get_weather_gif(condition: str) -> str:
-    """fetch a weather GIF with a direct-link fix and a solid fallback."""
+    """fetch a weather GIF with hardened validation for GitHub Actions."""
     api_key = os.getenv("GIPHY_API_KEY")
     
-    # fallback
+    # Your verified stable fallback
     fallback_url = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExemdteWFpanhuNDFzbmhvbTg0ZW9haThpYzFzeTRmNnUzajNxZno1byZlcD12MV9naWZzX3NlYXJjaCZjdD1n/AEpaVDTAop4TC/giphy.gif"
     
     if not api_key:
@@ -51,25 +51,35 @@ def get_weather_gif(condition: str) -> str:
     params = {
         "api_key": api_key,
         "q": query,
-        "limit": 5,
+        "limit": 10,  # Increased limit to provide better selection
         "rating": "g"
     }
     
+    # Add a User-Agent to look less like a bot when running from GitHub data centers
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    
     try:
-        resp = requests.get(url, params=params, timeout=5).json()
+        resp = requests.get(url, params=params, headers=headers, timeout=5).json()
         if resp.get('data') and len(resp['data']) > 0:
-            choice = random.choice(resp['data'])
+            # Shuffle and try to find a URL that isn't an error placeholder
+            choices = resp['data']
+            random.shuffle(choices)
             
-            # Using 'downsized_medium' or 'fixed_height' is best for direct .gif links
-            # We strip any URL parameters (everything after ?) to ensure email stability
-            gif_url = choice['images']['downsized_medium']['url'].split('?')[0]
-            
-            # Ensure it is a direct link to the media subdomain
-            if "giphy.gif" in gif_url:
-                return gif_url
+            for choice in choices:
+                gif_url = choice['images']['downsized_medium']['url'].split('?')[0]
+                
+                # HARDENED VALIDATION: 
+                # 1. Must be a direct media link
+                # 2. Must not contain common Giphy error IDs (404, errors, etc)
+                if "media" in gif_url and all(x not in gif_url for x in ["/404/", "/errors/", "/error-"]):
+                    return gif_url
+                    
     except Exception as e:
         print(f"⚠️ GIF Error: {e}")
     
+    # If the API returned junk or failed, use the reliable fallback
     return fallback_url
 
 def get_period_summary(city_key: str, hours: list) -> dict:
