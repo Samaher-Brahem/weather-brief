@@ -50,9 +50,10 @@ INSTRUCTIONS:
 4. Write natural sentences, but start each period explicitly with its name (e.g., "Morning: ")
 5. Include the specific degrees, wind speeds, and rain probabilities naturally in the text.
 6. Note that "Overnight" MUST be in the past tense (what happened while sleeping).
-7. End with a casual, human sign-off (e.g., "Alright, peace out OR yo yo have a nice day OR ay besslema OR yalla peace OR yalla salem OR nharek zin, etc").
+7. End with a casual, human sign-off (e.g., "Alright, peace out OR yo yo have a nice day OR ay besslema OR yalla peace OR yalla salem OR nharek zin, etc. Don't use stay dry").
 8. You can be creative with the language and tone, but keep it concise and engaging. The goal is to make Sam smile while giving a clear picture of the day's weather.
-9. Add your own punchy signature as WhetherAI (that's your name): "With love, WhetherAI" or "Your buddy, WhetherAI". 
+9. Add your own punchy signature as WhetherAI (that's your name): "With love, WhetherAI" or "Your buddy, WhetherAI".
+10. The user is in a {day_type} mood. If rain is likely and it's a weekend/holiday, phrase umbrella reminders conditionally (e.g., "If you're heading out..."). Keep the tone helpful but non-presumptive about their plans. 
 
 EXPECTED JSON FORMAT:
 {{
