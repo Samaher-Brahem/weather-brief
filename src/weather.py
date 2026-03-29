@@ -37,8 +37,14 @@ def get_daytime_rain_max(city_key: str) -> int:
     return max(day_rains) if day_rains else 0
 
 def get_weather_gif(condition: str) -> str:
-    """fetch a random weather-related GIF from top 5 Giphy results."""
+    """fetch a random weather-related GIF with a reliable fallback."""
     api_key = os.getenv("GIPHY_API_KEY")
+    # Your chosen reliable fallback GIF
+    fallback_url = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExemdteWFpanhuNDFzbmhvbTg0ZW9haThpYzFzeTRmNnUzajNxZno1byZlcD12MV9naWZzX3NlYXJjaCZjdD1n/AEpaVDTAop4TC/giphy.gif"
+    
+    if not api_key:
+        return fallback_url
+
     query = f"{condition} weather"
     url = "https://api.giphy.com/v1/gifs/search"
     params = {
@@ -47,16 +53,21 @@ def get_weather_gif(condition: str) -> str:
         "limit": 5,
         "rating": "g"
     }
+    
     try:
         resp = requests.get(url, params=params, timeout=5).json()
         if resp.get('data'):
             choice = random.choice(resp['data'])
-            # We use fixed_height to ensure a direct .gif link
-            return choice['images']['fixed_height']['url']
+            # We target the 'fixed_height' version specifically for the direct .gif link
+            gif_url = choice['images']['fixed_height']['url']
+            
+            # Email clients need the direct giphy.gif format, not the short link
+            if "giphy.gif" in gif_url:
+                return gif_url
     except Exception as e:
         print(f"GIF Error: {e}")
-    # Fallback GIF
-    return "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZ6Znc4bmZ6Znc4bmZ6Znc4bmZ6Znc4bmZ6Znc4bmZ6Znc4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7WIEVjXL8EH3OeL6/giphy.gif"
+    
+    return fallback_url
 
 def get_period_summary(city_key: str, hours: list) -> dict:
     hourly = fetch_forecast(city_key)
