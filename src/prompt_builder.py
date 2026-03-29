@@ -2,7 +2,7 @@
 from datetime import datetime
 from config import GRADIENT_COLOR_1, GRADIENT_COLOR_2, CITIES
 from src.day_classifier import get_weather_hours
-from src.weather import get_period_summary, get_24h_temp_range, get_daytime_rain_max
+from src.weather import get_period_summary, get_24h_temp_range, get_daytime_rain_max, get_weather_gif
 
 def build_weather_context(day_type: str) -> tuple[str, dict]:
     periods = get_weather_hours()
@@ -15,9 +15,10 @@ def build_weather_context(day_type: str) -> tuple[str, dict]:
     
     min_temp, max_temp = get_24h_temp_range("antwerp")
     rain_chance = get_daytime_rain_max("antwerp")
-    
-    # helper for rain description
     rain_label = "Low" if rain_chance < 20 else "Moderate" if rain_chance < 60 else "High"
+    
+    # We pass the GIF URL as part of the summaries or return it separately
+    summaries['gif_url'] = get_weather_gif(summaries['midday']['condition'])
     
     header = f"""
     <div style="background: linear-gradient(135deg, {GRADIENT_COLOR_1} 0%, {GRADIENT_COLOR_2} 100%); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
@@ -56,5 +57,5 @@ INSTRUCTIONS:
 EXPECTED JSON FORMAT:
 {{
   "subject": "emoji + catchy subject line",
-  "body": "morning greeting to Sam,\\n\\n[1 sentence general vibe of the day]\\n\\nOvernight: [past tense, mention conditions and rain]\\n\\nMorning: [forecast, specific temps, wind, vibe]\\n\\nMidday: [forecast, specific temps, vibe]\\n\\nEvening: [forecast, temps, rain prob]\\n\\nNight: [forecast, temps, chill/dry note]\\n\\n[Casual sign-off]\\n\\n[WhetherAI signature]"
+  "body": "morning greeting to Sam,\\n\\nTL;DR: [1 sentence general vibe of the day]\\n\\nOvernight: [past tense, mention conditions and rain]\\n\\nMorning: [forecast, specific temps, wind, vibe]\\n\\nMidday: [forecast, specific temps, vibe]\\n\\nEvening: [forecast, temps, rain prob]\\n\\nNight: [forecast, temps, chill/dry note]\\n\\n[Casual sign-off]\\n\\n[WhetherAI signature]"
 }}"""

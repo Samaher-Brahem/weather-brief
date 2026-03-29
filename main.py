@@ -14,8 +14,10 @@ def main():
         day_type = get_day_type()
         print(f"📅 detected day: {day_type}")
         
-        # 1. get weather data & header
+        # 1. get weather data, header, and the gif_url
+        # summaries now contains 'gif_url' added by build_weather_context
         header, summaries = build_weather_context(day_type)
+        gif_url = summaries.get('gif_url')
         
         # 2. build prompt and get json response from llm
         prompt = build_llm_prompt(day_type, summaries)
@@ -23,7 +25,8 @@ def main():
         print(f"✉️  subject generated: {subject}")
         
         # 3. send email
-        if send_weather_email(subject, body, header):
+        # Passing gif_url so email_sender knows what to inject under TL;DR:
+        if send_weather_email(subject, body, header, gif_url):
             print("✅ success!")
             return 0
             

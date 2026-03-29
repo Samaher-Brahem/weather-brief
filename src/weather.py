@@ -1,5 +1,7 @@
 """weather api interactions."""
 import requests
+import os
+import random
 from config import CITIES
 
 WMO_CODES = {
@@ -31,9 +33,30 @@ def get_24h_temp_range(city_key: str) -> tuple[int, int]:
 def get_daytime_rain_max(city_key: str) -> int:
     """get peak rain probability between 07:00 and 21:00."""
     hourly = fetch_forecast(city_key)
-    # 7 am to 9 pm (index 7 to 21)
     day_rains = hourly["precipitation_probability"][7:22]
     return max(day_rains) if day_rains else 0
+
+def get_weather_gif(condition: str) -> str:
+    """fetch a random weather-related GIF from top 5 Giphy results."""
+    api_key = os.getenv("GIPHY_API_KEY")
+    query = f"{condition} weather"
+    url = "https://api.giphy.com/v1/gifs/search"
+    params = {
+        "api_key": api_key,
+        "q": query,
+        "limit": 5,
+        "rating": "g"
+    }
+    try:
+        resp = requests.get(url, params=params, timeout=5).json()
+        if resp.get('data'):
+            choice = random.choice(resp['data'])
+            # We use fixed_height to ensure a direct .gif link
+            return choice['images']['fixed_height']['url']
+    except Exception as e:
+        print(f"GIF Error: {e}")
+    # Fallback GIF
+    return "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZ6Znc4bmZ6Znc4bmZ6Znc4bmZ6Znc4bmZ6Znc4bmZ6Znc4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7WIEVjXL8EH3OeL6/giphy.gif"
 
 def get_period_summary(city_key: str, hours: list) -> dict:
     hourly = fetch_forecast(city_key)
