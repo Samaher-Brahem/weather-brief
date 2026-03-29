@@ -3,13 +3,16 @@ import sys
 from pathlib import Path
 
 # Add current directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent))
+# sys.path.insert(0, str(Path(__file__).parent))
 
 from src.day_classifier import get_day_type
 from src.prompt_builder import build_weather_context, build_llm_prompt
 from src.llm_client import generate_weather_brief, generate_subject_line
 from src.email_sender import send_weather_brief_email
 
+import os
+
+print("DEBUG GROQ:", "SET" if os.getenv("GROQ_API_KEY") else "MISSING")
 
 def main():
     """Generate and send daily weather brief."""
