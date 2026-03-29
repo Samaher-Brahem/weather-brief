@@ -1,53 +1,40 @@
-"""Holiday detection utilities."""
+"""holiday caching and detection."""
 from datetime import datetime
 import requests
 
 ICS_URL = "https://www.officeholidays.com/ics-all/belgium"
-
-# Cache for holidays to avoid repeated API calls
 _holiday_cache = None
 
-
-def _fetch_holidays() -> list:
-    """Fetch Belgian public holidays from officeholidays.com."""
+def _fetch_holidays() -> set:
+    """fetch and cache holidays to avoid redundant api calls."""
+    global _holiday_cache
+    if _holiday_cache is not None:
+        return _holiday_cache
+        
     try:
-        response = requests.get(ICS_URL, timeout=10)
-        response.raise_for_status()
-        lines = response.text.splitlines()
-        holidays = []
+        resp = requests.get(ICS_URL, timeout=5)
+        resp.raise_for_status()
+        
+        holidays = set()
         current_date = None
-        current_name = None
-
-        for line in lines:
+        
+        for line in resp.text.splitlines():
             if line.startswith("DTSTART"):
                 try:
                     current_date = datetime.strptime(line.split(":")[1].strip(), "%Y%m%d").date()
-                except Exception:
-                    current_date = None
-            elif line.startswith("SUMMARY"):
-                current_name = line.split(":", 1)[1].strip()
-                if current_date and current_name and "Not a Public Holiday" not in current_name:
-                    holidays.append((current_date, current_name))
+                except ValueError:
+                    continue
+            elif line.startswith("SUMMARY") and current_date:
+                if "Not a Public Holiday" not in line:
+                    holidays.add(current_date)
                 current_date = None
-                current_name = None
+                
+        _holiday_cache = holidays
         return holidays
     except Exception as e:
-        print(f"⚠️ Holiday fetch failed: {e}")
-        return []
-
+        print(f"⚠️ holiday fetch failed: {e}")
+        return set()
 
 def is_today_public_holiday() -> bool:
-    """Check if today is a Belgian public holiday."""
-    today = datetime.now().date()
-    holidays = _fetch_holidays()
-    return any(date == today for date, _ in holidays)
-
-
-def get_today_public_holiday_name() -> str:
-    """Get the name of today's public holiday, if any."""
-    today = datetime.now().date()
-    holidays = _fetch_holidays()
-    for date, name in holidays:
-        if date == today:
-            return name
-    return None
+    """check if today is a public holiday."""
+    return datetime.now().date() in _fetch_holidays()

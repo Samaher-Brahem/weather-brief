@@ -1,178 +1,47 @@
-"""Email sending utilities with HTML formatting."""
+"""email formatting and delivery."""
 import os
 import smtplib
-import sys
-from pathlib import Path
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
-from dotenv import load_dotenv
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-load_dotenv()
-
-GMAIL_USER = os.getenv("GMAIL_USER")
-GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
-RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL")
-
-
-def create_email_html(subject: str, brief: str, weather_header: str) -> str:
-    """
-    Create a professional HTML email template with customizable colors.
+def send_weather_email(subject: str, body: str, header_html: str) -> bool:
+    """send html email via gmail."""
+    user = os.getenv("GMAIL_USER")
+    pwd = os.getenv("GMAIL_PASSWORD")
+    recipient = os.getenv("RECIPIENT_EMAIL")
     
-    Args:
-        subject: Email subject
-        brief: Weather brief content
-        weather_header: HTML header with date and temps
-        
-    Returns:
-        Complete HTML string
-    """
-    from config import (
-        GRADIENT_COLOR_1, GRADIENT_COLOR_2, ACCENT_COLOR,
-        PERIOD_BOX_BG, PERIOD_BORDER_COLOR, BOLD_PERIOD_HEADERS,
-        PERIOD_HEADER_STYLE, TIP_BOX_BG, TIP_BOX_BORDER
-    )
-    
-    timestamp = datetime.now().strftime("%H:%M")
-    
-    # Build font-weight and font-style based on config
-    font_weight = "bold" if BOLD_PERIOD_HEADERS or "bold" in PERIOD_HEADER_STYLE else "normal"
-    font_style = "italic" if "italic" in PERIOD_HEADER_STYLE else "normal"
+    # format body text to html breaks
+    body_html = body.replace("\n", "<br/>")
     
     html = f"""
     <!DOCTYPE html>
     <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            body {{
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background-color: #f5f5f5;
-                margin: 0;
-                padding: 20px;
-            }}
-            .container {{
-                max-width: 600px;
-                margin: 0 auto;
-                background-color: white;
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }}
-            .header {{
-                background: linear-gradient(135deg, {GRADIENT_COLOR_1} 0%, {GRADIENT_COLOR_2} 100%);
-                color: white;
-                padding: 30px 20px;
-                text-align: center;
-            }}
-            .header h1 {{
-                margin: 0;
-                font-size: 28px;
-                font-weight: 600;
-            }}
-            .content {{
-                padding: 30px 20px;
-                color: #333;
-                line-height: 1.6;
-            }}
-            .content p {{
-                margin: 15px 0;
-                font-size: 15px;
-            }}
-            .period {{
-                background-color: {PERIOD_BOX_BG};
-                border-left: 4px solid {PERIOD_BORDER_COLOR};
-                padding: 15px;
-                margin: 20px 0;
-                border-radius: 4px;
-            }}
-            .period strong {{
-                display: block;
-                color: {ACCENT_COLOR};
-                margin-bottom: 8px;
-                font-size: 16px;
-                font-weight: {font_weight};
-                font-style: {font_style};
-            }}
-            .tip {{
-                background-color: {TIP_BOX_BG};
-                border: 1px solid {TIP_BOX_BORDER};
-                padding: 15px;
-                border-radius: 6px;
-                margin: 20px 0;
-                font-style: italic;
-                color: #555;
-            }}
-            .footer {{
-                background-color: #f5f5f5;
-                padding: 15px 20px;
-                text-align: center;
-                font-size: 12px;
-                color: #999;
-                border-top: 1px solid #e0e0e0;
-            }}
-            strong {{
-                color: {ACCENT_COLOR};
-            }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1>☀️ Weather Brief</h1>
+    <body style="font-family: sans-serif; background: #f5f5f5; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            {header_html}
+            <div style="color: #444; line-height: 1.6; font-size: 15px;">
+                {body_html}
             </div>
-            <div class="content">
-                {weather_header}
-                <div style="margin-top: 20px; color: #555;">
-                    {brief.replace(chr(10), '<br/>')}
-                </div>
-            </div>
-            <div class="footer">
-                Generated at {timestamp}
+            <div style="margin-top: 30px; font-size: 12px; color: #999; text-align: center;">
+                Generated at {datetime.now().strftime("%H:%M")}
             </div>
         </div>
     </body>
     </html>
     """
-    return html
-
-
-def send_weather_brief_email(subject: str, brief: str, weather_header: str) -> bool:
-    """
-    Send the weather brief email via Gmail SMTP.
     
-    Args:
-        subject: Email subject line
-        brief: Weather brief content
-        weather_header: HTML header with metadata
-        
-    Returns:
-        True if successful, False otherwise
-    """
     try:
-        # Create message
-        message = MIMEMultipart("alternative")
-        message["Subject"] = subject
-        message["From"] = GMAIL_USER
-        message["To"] = RECIPIENT_EMAIL
+        msg = MIMEMultipart()
+        msg["Subject"] = subject
+        msg["From"] = user
+        msg["To"] = recipient
+        msg.attach(MIMEText(html, "html"))
         
-        # Create HTML version
-        html_content = create_email_html(subject, brief, weather_header)
-        html_part = MIMEText(html_content, "html")
-        message.attach(html_part)
-        
-        # Send via Gmail SMTP
-        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-        server.login(GMAIL_USER, GMAIL_PASSWORD)
-        server.sendmail(GMAIL_USER, RECIPIENT_EMAIL, message.as_string())
-        server.quit()
-        
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(user, pwd)
+            server.sendmail(user, recipient, msg.as_string())
         return True
-    
     except Exception as e:
-        print(f"❌ Failed to send email: {e}")
+        print(f"❌ email failed: {e}")
         return False

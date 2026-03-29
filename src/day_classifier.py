@@ -1,33 +1,26 @@
-"""Day type classification for weather briefing."""
+"""day type classification."""
 from datetime import datetime
-import sys
-from pathlib import Path
-
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from config import COMMUTE_DAYS, MORNING_HOURS, MIDDAY_HOURS, EVENING_HOURS, FULL_DAY_HOURS
 from src.holidays import is_today_public_holiday
-
+from config import COMMUTE_DAYS, OVERNIGHT_HOURS, MORNING_HOURS, MIDDAY_HOURS, EVENING_HOURS, NIGHT_HOURS
 
 def get_day_type() -> str:
-    """Determine the type of day (holiday, weekend, commute, or work_from_home)."""
-    today = datetime.now()
-    weekday = today.weekday()  # Monday=0, Sunday=6
-
+    """determine if today is holiday, weekend, commute, or wfh."""
+    weekday = datetime.now().weekday()
+    
     if is_today_public_holiday():
         return "holiday"
-    if weekday >= 5:  # Saturday=5, Sunday=6
+    if weekday >= 5:
         return "weekend"
     if weekday in COMMUTE_DAYS:
         return "commute_day"
     return "work_from_home"
 
-
-def get_weather_hours(day_type: str) -> dict:
-    """Get relevant weather hours for the day type."""
+def get_weather_hours() -> dict:
+    """return standard weather periods."""
     return {
+        "overnight": OVERNIGHT_HOURS,
         "morning": MORNING_HOURS,
         "midday": MIDDAY_HOURS,
-        "evening": EVENING_HOURS
+        "evening": EVENING_HOURS,
+        "night": NIGHT_HOURS
     }
