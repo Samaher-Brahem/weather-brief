@@ -37,38 +37,41 @@ def get_daytime_rain_max(city_key: str) -> int:
     return max(day_rains) if day_rains else 0
 
 def get_weather_gif(condition: str) -> str:
-    """fetch a weather GIF with a direct-link fix and a solid fallback."""
+    """fetch a weather GIF with hardened headers for GitHub Actions."""
     api_key = os.getenv("GIPHY_API_KEY")
-    
-    # YOUR FALLBACK: Direct media link to the cat with the umbrella
     fallback_url = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExemdteWFpanhuNDFzbmhvbTg0ZW9haThpYzFzeTRmNnUzajNxZno1byZlcD12MV9naWZzX3NlYXJjaCZjdD1n/AEpaVDTAop4TC/giphy.gif"
     
     if not api_key:
         return fallback_url
 
-    query = f"{condition} weather"
     url = "https://api.giphy.com/v1/gifs/search"
     params = {
         "api_key": api_key,
-        "q": query,
-        "limit": 5,
+        "q": f"{condition} weather",
+        "limit": 10,
         "rating": "g"
     }
     
+    # Fake a browser header to prevent Giphy from flagging GitHub Actions as a bot
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    
     try:
-        resp = requests.get(url, params=params, timeout=5).json()
+        resp = requests.get(url, params=params, headers=headers, timeout=5).json()
         if resp.get('data') and len(resp['data']) > 0:
+            # Pick a random one from the top 10 for variety
             choice = random.choice(resp['data'])
             
-            # Using 'downsized_medium' or 'fixed_height' is best for direct .gif links
-            # We strip any URL parameters (everything after ?) to ensure email stability
-            gif_url = choice['images']['downsized_medium']['url'].split('?')[0]
+            # 'original' is the most robust URL format for external embeds (emails)
+            # .split('?')[0] is vital to remove tracking tokens that expire
+            gif_url = choice['images']['original']['url'].split('?')[0]
             
-            # Ensure it is a direct link to the media subdomain
-            if "giphy.gif" in gif_url:
+            # Double check it's the direct media subdomain
+            if "media" in gif_url or "giphy.gif" in gif_url:
                 return gif_url
     except Exception as e:
-        print(f"⚠️ GIF Error: {e}")
+        print(f"⚠️ GIF Fetch Error: {e}")
     
     return fallback_url
 
