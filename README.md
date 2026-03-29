@@ -1,19 +1,15 @@
-# Weather Brief Automator 🌤️
+# WhetherAI 🌦️
 
-A lightweight, automated script that sends you a smart daily weather briefing every morning. 
+A simple weather briefing system that tells you **whether** to take an umbrella or **whether** to wear a t-shirt.
 
-Instead of opening a weather app and figuring out what to wear, this script pulls data from Open-Meteo, figures out if you're commuting or working from home, and uses an AI (Groq + Llama 3) to write you a quick, human-friendly email summary.
+### features
+- **24h intelligence:** analyzes overnight, morning, midday, evening, and night.
+- **smart location:** switches to Brussels forecast on commute days automatically.
+- **llm generated:** uses llama 3.3 to write natural, bolded summaries.
+- **pro email:** clean html template with dynamic subject lines.
 
-## What it does
-* **Tracks your whole day:** Summarizes the weather in 5 blocks: Overnight (0-6h), Morning (6-11h), Midday (11-16h), Evening (16-20h), and Night (20-24h).
-* **Location aware:** If it's a commute day, it automatically checks the destination city's weather for your work hours.
-* **Smart Subjects:** The AI generates a unique subject line every day based on the actual forecast (e.g., "🌧️ Bring an umbrella!").
+### setup
+1. fill `.env` with your groq and gmail credentials.
+2. run `python main.py`.
+3. for automation, check `.github/workflows/weather_brief.yml`.
 
-## Setup
-1. Clone the repo and `pip install -r requirements.txt`.
-2. Create a `.env` file with:
-   ```env
-   GROQ_API_KEY=your_key
-   GMAIL_USER=your_email@gmail.com
-   GMAIL_PASSWORD=your_app_password
-   RECIPIENT_EMAIL=where_to_send@email.com
