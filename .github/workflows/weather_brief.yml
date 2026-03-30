@@ -2,7 +2,7 @@ name: Daily Weather Brief
 
 on:
   schedule:
-    - cron: '3 4 * * *'   # 5:03 Brussels (UTC+1)
+    - cron: '3 4 * * *'   # 6:03 Brussels (UTC+2)
   workflow_dispatch:
 
 jobs:
