@@ -44,18 +44,20 @@ The project is intentionally simple and modular:
   Runs daily via GitHub Actions with environment-based configuration.
 
 ## Project Structure
-
 .
 ├── main.py
 ├── config.py
-├── .github/workflows/weather_brief.yml
+├── requirements.txt
+├── .github/
+│   └── workflows/
+│       └── weather_brief.yml
 └── src/
-├──── day_classifier.py
-├──── prompt_builder.py
-├──── llm_client.py
-├──── email_sender.py
-├──── weather.py
-└──── holidays.py
+    ├── day_classifier.py
+    ├── prompt_builder.py
+    ├── llm_client.py
+    ├── email_sender.py
+    ├── weather.py
+    └── holidays.py
 
 ## Environment Variables
 
