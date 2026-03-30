@@ -44,6 +44,7 @@ The project is intentionally simple and modular:
   Runs daily via GitHub Actions with environment-based configuration.
 
 ## Project Structure
+```
 .
 ├── main.py
 ├── config.py
@@ -58,6 +59,7 @@ The project is intentionally simple and modular:
     ├── email_sender.py
     ├── weather.py
     └── holidays.py
+```
 
 ## Environment Variables
 
