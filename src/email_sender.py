@@ -4,6 +4,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
+from zoneinfo import ZoneInfo
+
 
 def send_weather_email(subject: str, body: str, header_html: str, gif_url: str = None) -> bool:
     """send html email via gmail."""
@@ -62,7 +64,7 @@ def send_weather_email(subject: str, body: str, header_html: str, gif_url: str =
                 </div>
             </div>
             <div style="margin-top: 30px; font-size: 11px; color: #bbb; text-align: center;">
-                Generated at {datetime.now().strftime("%H:%M")} • WhetherAI • Built By Sam (for Sam 👀)
+                Generated at {datetime.now(ZoneInfo("Europe/Brussels")).strftime("%H:%M")} • WhetherAI • Built By Sam (for Sam 👀)
             </div>
         </div>
     </body>

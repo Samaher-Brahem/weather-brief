@@ -2,9 +2,7 @@ name: Daily Weather Brief
 
 on:
   schedule:
-    # These times are UTC: Brussels is UTC+1/UTC+2
     - cron: '3 4 * * *'   # 5:03 Brussels (UTC+1)
-    - cron: '28 5 * * *'  # 6:28 Brussels (UTC+1, backup)
   workflow_dispatch:
 
 jobs:

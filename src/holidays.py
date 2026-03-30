@@ -1,6 +1,8 @@
 """holiday caching and detection."""
 from datetime import datetime
 import requests
+from zoneinfo import ZoneInfo
+
 
 ICS_URL = "https://www.officeholidays.com/ics-all/belgium"
 _holiday_cache = None
@@ -37,4 +39,4 @@ def _fetch_holidays() -> set:
 
 def is_today_public_holiday() -> bool:
     """check if today is a public holiday."""
-    return datetime.now().date() in _fetch_holidays()
+    return datetime.now(ZoneInfo("Europe/Brussels")).date() in _fetch_holidays()

@@ -1,11 +1,12 @@
 """day type classification."""
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from src.holidays import is_today_public_holiday
 from config import COMMUTE_DAYS, OVERNIGHT_HOURS, MORNING_HOURS, MIDDAY_HOURS, EVENING_HOURS, NIGHT_HOURS
 
 def get_day_type() -> str:
     """determine if today is holiday, weekend, commute, or wfh."""
-    weekday = datetime.now().weekday()
+    weekday = now = datetime.now(ZoneInfo("Europe/Brussels")).weekday()
     
     if is_today_public_holiday():
         return "holiday"

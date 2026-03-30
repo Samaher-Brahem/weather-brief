@@ -1,5 +1,6 @@
 """context and prompt formulation."""
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from config import GRADIENT_COLOR_1, GRADIENT_COLOR_2, CITIES
 from src.day_classifier import get_weather_hours
 from src.weather import get_period_summary, get_24h_temp_range, get_daytime_rain_max, get_weather_gif
@@ -22,7 +23,7 @@ def build_weather_context(day_type: str) -> tuple[str, dict]:
     
     header = f"""
     <div style="background: linear-gradient(135deg, {GRADIENT_COLOR_1} 0%, {GRADIENT_COLOR_2} 100%); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-        <h2 style="margin: 0 0 10px 0;">{datetime.now().strftime("%A, %B %d")}</h2>
+        <h2 style="margin: 0 0 10px 0;">{datetime.now(ZoneInfo("Europe/Brussels")).strftime("%A, %B %d")}</h2>
         <p style="margin: 5px 0; font-size: 16px;">🌡️ High: {max_temp}°C | Low: {min_temp}°C</p>
         <p style="margin: 5px 0; font-size: 16px;">☔ Rain Risk: {rain_chance}% ({rain_label})</p>
     </div>
