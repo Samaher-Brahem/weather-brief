@@ -6,7 +6,8 @@ from config import COMMUTE_DAYS, OVERNIGHT_HOURS, MORNING_HOURS, MIDDAY_HOURS, E
 
 def get_day_type() -> str:
     """determine if today is holiday, weekend, commute, or wfh."""
-    weekday = now = datetime.now(ZoneInfo("Europe/Brussels")).weekday()
+    now = datetime.now(ZoneInfo("Europe/Brussels"))
+    weekday = now.weekday()
     
     if is_today_public_holiday():
         return "holiday"
