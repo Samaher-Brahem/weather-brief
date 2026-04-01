@@ -44,7 +44,7 @@ WEATHER DATA:
 - Night (20-24h): {fmt('night')}
 
 INSTRUCTIONS:
-0. Start with a friendly morning to Sam or Samaher. Use a different greeting each time (you can be creative here).
+0. Start with a friendly morning to Sam or Samaher. Use a different greeting each time (you can be creative here, but keep it modern and fresh).
 1. Output valid JSON only. No markdown formatting outside the JSON.
 2. "subject": A dynamic, catchy subject line summarizing the general weather condition with an emoji.
 3. "body": The email body exactly matching the structure below. Use double newlines (\\n\\n) between sections so it renders with line breaks.
