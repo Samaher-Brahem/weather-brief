@@ -18,7 +18,6 @@ def build_weather_context(day_type: str) -> tuple[str, dict]:
     rain_chance = get_daytime_rain_max("antwerp")
     rain_label = "Low" if rain_chance < 20 else "Moderate" if rain_chance < 60 else "High"
     
-    # We pass the GIF URL as part of the summaries or return it separately
     summaries['gif_url'] = get_weather_gif(summaries['midday']['condition'])
     
     header = f"""

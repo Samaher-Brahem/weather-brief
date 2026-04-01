@@ -12,9 +12,7 @@ def send_weather_email(subject: str, body: str, header_html: str, gif_url: str =
     user = os.getenv("GMAIL_USER")
     pwd = os.getenv("GMAIL_PASSWORD")
     recipient = os.getenv("RECIPIENT_EMAIL")
-    
-    # 1. Clean the body: Remove all empty lines/extra whitespace from the LLM
-    # This gives us a clean list of actual text paragraphs.
+
     raw_lines = [line.strip() for line in body.split('\n') if line.strip()]
     
     processed_lines = []
@@ -23,9 +21,7 @@ def send_weather_email(subject: str, body: str, header_html: str, gif_url: str =
     for line in raw_lines:
         processed_lines.append(line)
         
-        # Robust check for TL;DR
         if "TL;DR" in line.upper() and gif_url and not gif_inserted:
-            # We use a div with no bottom margin and vertical-align to keep it tight
             gif_html = (
                 f'<div style="text-align: center; margin-top: 10px; margin-bottom: 5px; line-height: 0;">'
                 f'<img src="{gif_url}" alt="Weather Vibe" width="200" '
@@ -36,16 +32,10 @@ def send_weather_email(subject: str, body: str, header_html: str, gif_url: str =
             processed_lines.append(gif_html)
             gif_inserted = True
 
-    # 2. Separate the main content from the signature (last 2 lines)
     main_text_content = processed_lines[:-2]
     signature_content = processed_lines[-2:]
     
-    # 3. Join paragraphs with a double break for a clean "letter" look
-    # Since we cleaned the lines earlier, this will be perfectly consistent.
     main_html = "<br/><br/>".join(main_text_content)
-    
-    # Special Fix: If a GIF was inserted, it's followed by a double break. 
-    # To tighten the space specifically AFTER the GIF, we can reduce that one gap.
     main_html = main_html.replace('</div><br/><br/>', '</div><br/>')
     
     sig_html = "<br/>".join(signature_content)

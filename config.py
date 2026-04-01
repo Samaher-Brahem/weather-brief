@@ -12,7 +12,6 @@ MIDDAY_HOURS = list(range(11, 16))
 EVENING_HOURS = list(range(16, 20))
 NIGHT_HOURS = list(range(20, 24))
 
-# sets are faster for lookups (O(1))
 COMMUTE_DAYS = {1, 3}  # tuesday=1, thursday=3
 
 # styling
