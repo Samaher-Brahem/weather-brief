@@ -2,7 +2,7 @@ name: Daily Weather Brief
 
 on:
   schedule:
-    - cron: '59 * * * *'   # Every hour at minute 59 (UTC)
+    - cron: '39 * * * *'   # Every hour at minute 59 (UTC)
   workflow_dispatch:
 
 jobs:
