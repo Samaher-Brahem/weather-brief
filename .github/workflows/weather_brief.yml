@@ -2,7 +2,8 @@ name: Daily Weather Brief
 
 on:
   schedule:
-    - cron: '49 8 * * *' 
+    - cron: '54 9 * * *' 
+    
   workflow_dispatch:
 
 jobs:
