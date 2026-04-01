@@ -2,7 +2,8 @@ name: Daily Weather Brief
 
 on:
   schedule:
-    - cron: '39 * * * *'   # Every hour at minute 59 (UTC)
+    # These times are UTC: Brussels is UTC+1/UTC+2
+    - cron: '3 2 * * *' 
   workflow_dispatch:
 
 jobs:
@@ -15,7 +16,7 @@ jobs:
       GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
       RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
       GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
-      TZ: 'Europe/Brussels'   # Affects displayed time only
+      TZ: 'Europe/Brussels'
 
     steps:
       - name: Checkout code
@@ -33,18 +34,17 @@ jobs:
           echo "GROQ length: ${#GROQ_API_KEY}"
           echo "GMAIL_USER set: $([ -n "$GMAIL_USER" ] && echo YES || echo NO)"
           echo "RECIPIENT_EMAIL set: $([ -n "$RECIPIENT_EMAIL" ] && echo YES || echo NO)"
+          
+          echo "🕒 Current Brussels time: $(date +"%Y-%m-%d %H:%M:%S %Z")"
 
-          echo ""
-          echo "================ TIME DEBUG ================"
-          echo "UTC now:        $(date -u +"%Y-%m-%d %H:%M:%S %Z")"
-          echo "Brussels time:  $(date +"%Y-%m-%d %H:%M:%S %Z")"
-          echo "Epoch time:     $(date +%s)"
-          echo "==========================================="
-
-      - name: Show GitHub event context
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Triggered at (GitHub): ${{ github.run_started_at }}"
+          # Only continue if within 5:00-6:30 Brussels time
+          current_hour=$(date +"%H")
+          current_minute=$(date +"%M")
+          if [ "$current_hour" -lt 5 ] || [ "$current_hour" -gt 6 ] || \
+             { [ "$current_hour" -eq 6 ] && [ "$current_minute" -gt 30 ]; }; then
+            echo "⚠️ Outside target time window. Exiting."
+            exit 0
+          fi
 
       - name: Install dependencies
         run: |
@@ -52,7 +52,4 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run weather brief
-        run: |
-          echo "🚀 Script execution starting at: $(date +"%Y-%m-%d %H:%M:%S %Z")"
-          python main.py
-          echo "✅ Script completed at: $(date +"%Y-%m-%d %H:%M:%S %Z")"
+        run: python main.py
