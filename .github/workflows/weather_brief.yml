@@ -2,7 +2,7 @@ name: Daily Weather Brief
 
 on:
   schedule:
-    - cron: '22 7 * * *'   
+    - cron: '40 7 * * *'
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
       RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
       GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
-      TZ: 'Europe/Brussels'   # Important: set runner timezone
+      TZ: 'Europe/Brussels'   # Set runner timezone
 
     steps:
       - name: Checkout code
