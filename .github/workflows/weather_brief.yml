@@ -2,7 +2,7 @@ name: Daily Weather Brief
 
 on:
   schedule:
-    - cron: '40 9 * * *'  
+    - cron: '59 * * * *'   # Every hour at minute 59 (UTC)
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
       RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
       GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
-      TZ: 'Europe/Brussels'   # Set runner timezone
+      TZ: 'Europe/Brussels'   # Affects displayed time only
 
     steps:
       - name: Checkout code
@@ -33,10 +33,18 @@ jobs:
           echo "GROQ length: ${#GROQ_API_KEY}"
           echo "GMAIL_USER set: $([ -n "$GMAIL_USER" ] && echo YES || echo NO)"
           echo "RECIPIENT_EMAIL set: $([ -n "$RECIPIENT_EMAIL" ] && echo YES || echo NO)"
-          
-          echo "🕒 Current Brussels time: $(date +"%Y-%m-%d %H:%M:%S %Z")"
-          echo "UTC time: $(date -u +"%Y-%m-%d %H:%M:%S %Z")"
-          echo "Job started at: $(date +"%Y-%m-%d %H:%M:%S")"
+
+          echo ""
+          echo "================ TIME DEBUG ================"
+          echo "UTC now:        $(date -u +"%Y-%m-%d %H:%M:%S %Z")"
+          echo "Brussels time:  $(date +"%Y-%m-%d %H:%M:%S %Z")"
+          echo "Epoch time:     $(date +%s)"
+          echo "==========================================="
+
+      - name: Show GitHub event context
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Triggered at (GitHub): ${{ github.run_started_at }}"
 
       - name: Install dependencies
         run: |
